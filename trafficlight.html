@@ -1,0 +1,358 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrafficFlow | Traffic Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">TF</div>
+                <div>
+                    <h2>TrafficFlow</h2>
+                    <p>Management System</p>
+                </div>
+            </div>
+
+            <p class="nav-heading">WORKSPACE</p>
+            <nav>
+                <a class="nav-link active" href="#dashboard">Dashboard</a>
+                <a class="nav-link" href="#monitoring">Traffic Monitoring</a>
+                <a class="nav-link" href="#analytics">Traffic Analytics</a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="system-status">
+                    <span class="status-dot"></span>
+                    <div>
+                        <strong>Demo mode</strong>
+                        <p>Sample traffic data</p>
+                    </div>
+                </div>
+                <p class="sidebar-footer">TrafficFlow v1.0</p>
+            </div>
+        </aside>
+
+        <main class="main-content" id="dashboard">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">TRAFFIC CONTROL CENTER</p>
+                    <h1>Traffic Dashboard</h1>
+                    <p class="subtitle">Monitor road activity and congestion in one place.</p>
+                </div>
+                <div class="topbar-right">
+                    <span class="live-badge">
+                        <span class="status-dot"></span> DEMO LIVE
+                    </span>
+                    <div class="avatar">AD</div>
+                </div>
+            </header>
+
+            <section class="welcome-row">
+                <div>
+                    <h2>Overview</h2>
+                    <p>Here is the current sample traffic situation.</p>
+                </div>
+                <button class="primary-button" id="openFormButton">+ Add Traffic Record</button>
+            </section>
+
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Roads Monitored</span>
+                        <span class="stat-icon blue">R</span>
+                    </div>
+                    <h2 id="totalRoads">0</h2>
+                    <p class="stat-note">Unique road locations</p>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">High Congestion</span>
+                        <span class="stat-icon orange">!</span>
+                    </div>
+                    <h2 id="highCongestion">0</h2>
+                    <p class="stat-note">Records marked high</p>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Vehicles Counted</span>
+                        <span class="stat-icon purple">V</span>
+                    </div>
+                    <h2 id="totalVehicles">0</h2>
+                    <p class="stat-note">Across current records</p>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Incident Records</span>
+                        <span class="stat-icon red">!</span>
+                    </div>
+                    <h2 id="totalIncidents">0</h2>
+                    <p class="stat-note">Records with incidents</p>
+                </article>
+            </section>
+
+<section class="panel simulation-panel" id="simulation">
+    <div class="panel-heading">
+        <div>
+            <h2>Live Traffic Simulation</h2>
+            <p>Four-way intersection with adaptive traffic signals</p>
+        </div>
+        <span class="small-tag" id="simStatus">SIMULATION RUNNING</span>
+    </div>
+
+    <div class="simulation-stats">
+        <div>
+            <span>Vehicles on road</span>
+            <strong id="simVehicleCount">0</strong>
+        </div>
+        <div>
+            <span>Active signal</span>
+            <strong id="simActiveSignal">North–South</strong>
+        </div>
+        <div>
+            <span>Signal countdown</span>
+            <strong id="simCountdown">10 s</strong>
+        </div>
+    </div>
+    
+<div class="congestion-status">
+    <div>
+        <span class="congestion-label">Current Traffic</span>
+        <h3 id="congestionLevel">LOW</h3>
+        <p id="congestionMessage">Traffic is flowing smoothly.</p>
+    </div>
+    <div class="congestion-indicator" id="congestionIndicator"></div>
+</div>
+
+
+    <div class="intersection-stage" id="intersectionStage"
+         aria-label="Animated four-way traffic intersection">
+        <div class="road road-horizontal"></div>
+        <div class="road road-vertical"></div>
+        <div class="lane-line lane-horizontal"></div>
+        <div class="lane-line lane-vertical"></div>
+
+        <div class="signal signal-north" id="signalNorth">
+            <span></span><span></span><span></span>
+        </div>
+        <div class="signal signal-south" id="signalSouth">
+            <span></span><span></span><span></span>
+        </div>
+        <div class="signal signal-east" id="signalEast">
+            <span></span><span></span><span></span>
+        </div>
+        <div class="signal signal-west" id="signalWest">
+            <span></span><span></span><span></span>
+        </div>
+
+        <div class="vehicle-layer" id="vehicleLayer"></div>
+        <div class="intersection-label">4-WAY JUNCTION</div>
+    </div>
+
+    <div class="simulation-footer">
+        <span><i class="signal-key green-key"></i> Green: Go</span>
+        <span><i class="signal-key yellow-key"></i> Yellow: Caution</span>
+        <span><i class="signal-key red-key"></i> Red: Stop</span>
+    </div>
+    
+<div class="live-traffic-graph">
+    <h3>Live Traffic Density</h3>
+    <p>Vehicle count recorded over time</p>
+    <canvas id="simTrafficChart"></canvas>
+    <div class="graph-legend">
+        <span></span> Simulated vehicles
+    </div>
+</div>
+
+<div class="controller-comparison">
+    <h3>Signal Controller Test</h3>
+    <p>Compare fixed-time and adaptive signal control.</p>
+
+    <div class="controller-controls">
+        <label for="controllerMode">Signal mode</label>
+        <select id="controllerMode">
+            <option value="adaptive">Adaptive control</option>
+            <option value="fixed">Fixed-time control</option>
+        </select>
+
+        <button type="button" id="resetExperiment">
+            Reset Results
+        </button>
+        <button type="button" id="saveSimulationReport">
+    Save Report
+</button>
+    </div>
+
+    <div class="experiment-results">
+        <div>
+            <span>Vehicles served</span>
+            <strong id="vehiclesServed">0</strong>
+        </div>
+        <div>
+            <span>Average waiting time</span>
+            <strong id="averageWait">0.0 s</strong>
+        </div>
+        <div>
+            <span>Maximum queue</span>
+            <strong id="maximumQueue">0</strong>
+        </div>
+    </div>
+
+    <p id="experimentStatus">
+        Select a controller and observe the simulation.
+    </p>
+</div>
+
+
+</section>
+
+            <section class="content-grid" id="analytics">
+                <article class="panel chart-panel">
+                    <div class="panel-heading">
+                        <div>
+                            <h2>Congestion Overview</h2>
+                            <p>Number of road records by congestion level</p>
+                        </div>
+                        <span class="small-tag">CURRENT DATA</span>
+                    </div>
+
+                    <div class="chart" id="congestionChart">
+                        <div class="chart-empty">Loading chart...</div>
+                    </div>
+                    <div class="chart-legend">
+                        <span><i class="legend-dot low-dot"></i>Low</span>
+                        <span><i class="legend-dot medium-dot"></i>Medium</span>
+                        <span><i class="legend-dot high-dot"></i>High</span>
+                    </div>
+                </article>
+
+                <article class="panel distribution-panel">
+                    <div class="panel-heading">
+                        <div>
+                            <h2>Traffic Distribution</h2>
+                            <p>Share of current records</p>
+                        </div>
+                    </div>
+
+                    <div class="distribution" id="distribution">
+                        <div class="chart-empty">Loading distribution...</div>
+                    </div>
+                    <div class="distribution-summary" id="distributionSummary"></div>
+                </article>
+            </section>
+
+            <section class="panel table-panel" id="monitoring">
+                <div class="panel-heading table-heading">
+                    <div>
+                        <h2>Traffic Monitoring</h2>
+                        <p>Search, filter, and manage traffic records.</p>
+                    </div>
+                    <span class="record-count" id="recordCount">0 records</span>
+                </div>
+
+                <div class="toolbar">
+                    <input id="searchInput" type="search"
+                           placeholder="Search road or location..."
+                           aria-label="Search traffic records">
+
+                    <select id="congestionFilter" aria-label="Filter congestion">
+                        <option value="all">All congestion levels</option>
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+
+                    <button class="secondary-button" id="resetButton">Reset filters</button>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ROAD / LOCATION</th>
+                                <th>VEHICLES</th>
+                                <th>CONGESTION</th>
+                                <th>INCIDENT</th>
+                                <th>LAST UPDATED</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trafficTableBody"></tbody>
+                    </table>
+                </div>
+                <p class="table-footnote">
+                    Demo data only. Records are stored in this browser session.
+                </p>
+            </section>
+
+            <footer class="page-footer">
+                <span>TrafficFlow Traffic Management System</span>
+                <span>Real-time traffic control · Connected to MySQL</span>
+            </footer>
+        </main>
+    </div>
+
+    <div class="modal-overlay hidden" id="recordModal">
+        <section class="modal" role="dialog" aria-modal="true"
+                 aria-labelledby="modalTitle">
+            <div class="modal-heading">
+                <div>
+                    <p class="eyebrow">TRAFFIC RECORD</p>
+                    <h2 id="modalTitle">Add Traffic Record</h2>
+                </div>
+                <button class="close-button" id="closeFormButton"
+                        aria-label="Close form">&times;</button>
+            </div>
+
+            <form id="trafficForm">
+                <label for="roadName">Road name</label>
+                <input id="roadName" name="roadName" type="text"
+                       placeholder="e.g. Main Road" required maxlength="80">
+
+                <label for="location">Location / area</label>
+                <input id="location" name="location" type="text"
+                       placeholder="e.g. Central Junction" required maxlength="80">
+
+                <label for="vehicles">Vehicle count</label>
+                <input id="vehicles" name="vehicles" type="number"
+                       min="0" max="1000000" placeholder="e.g. 250" required>
+
+                <label for="congestion">Congestion level</label>
+                <select id="congestion" name="congestion" required>
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                </select>
+
+                <label for="incident">Incident status</label>
+                <select id="incident" name="incident" required>
+                    <option value="None">No incident</option>
+                    <option value="Accident">Accident</option>
+                    <option value="Roadwork">Roadwork</option>
+                    <option value="Road Block">Road block</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <p class="form-error" id="formError" role="alert"></p>
+
+                <div class="form-actions">
+                    <button type="button" class="secondary-button"
+                            id="cancelFormButton">Cancel</button>
+                    <button type="submit" class="primary-button">Save Record</button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
